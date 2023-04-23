@@ -3,12 +3,18 @@ import 'package:feathersjs_demo_app/screens/login.dart';
 import 'package:feathersjs_demo_app/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_feathersjs/flutter_feathersjs.dart';
+//import 'package:socket_io_client/socket_io_client.dart' as socket;
 
 FlutterFeathersjs flutterFeathersJS = FlutterFeathersjs();
+//..init(baseUrl: API.baseUrl, extraHeaders: {"auth-demo": API.secret});
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   Dio dio = Dio(BaseOptions(baseUrl: API.baseUrl, headers: {"auth-demo": API.secret}));
-  //flutterFeathersjs.configure(FlutterFeathersjs.restClient(dio));
+  flutterFeathersJS.configure(FlutterFeathersjs.restClient(dio));
+
+/*   socket.Socket io = socket.io(API.baseUrl);
+  flutterFeathersJS.configure(FlutterFeathersjs.socketioClient(io)); */
   runApp(const MyApp());
 }
 

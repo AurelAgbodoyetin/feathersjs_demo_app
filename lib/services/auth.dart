@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:feathersjs_demo_app/global.dart';
 import 'package:feathersjs_demo_app/main.dart';
 import 'package:feathersjs_demo_app/models/user.dart';
 import 'package:feathersjs_demo_app/services/api.dart';
@@ -13,60 +12,59 @@ class AuthAPI {
       Map<String, dynamic> response = await flutterFeathersJS.authenticate(
         userName: email,
         password: password,
+        strategy: "local",
       );
-      log(response.toString());
+      logger.i(response);
       user = User.fromMap(response);
       // If all thing is ok, save user in local storage
       /*  await utils.setLoggedUser(user);
        */
     } on FeatherJsError catch (e) {
       if (e.type == FeatherJsErrorType.IS_INVALID_CREDENTIALS_ERROR) {
-        log("IS_INVALID_CREDENTIALS_ERROR");
+        logger.e("IS_INVALID_CREDENTIALS_ERROR");
         error = "Please check your credentials";
       } else if (e.type == FeatherJsErrorType.IS_INVALID_STRATEGY_ERROR) {
-        log("IS_INVALID_STRATEGY_ERROR");
+        logger.e("IS_INVALID_STRATEGY_ERROR");
       } else if (e.type == FeatherJsErrorType.IS_AUTH_FAILED_ERROR) {
-        log("IS_AUTH_FAILED_ERROR");
+        logger.e("IS_AUTH_FAILED_ERROR");
         error = "Unexpected error occured, please retry!";
       } else {
-        log("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
+        logger.e("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
         error = "Unexpected FeatherJsError occured, please retry!";
       }
     } catch (e) {
-      log("Unexpected error ::: ${e.toString()}");
+      logger.e("Unexpected error ::: ${e.toString()}");
       error = "Unexpected error occured, please retry!";
     }
     return APIResponse(errorMessage: error, data: user);
   }
 
-  Future<APIResponse<User>> registerUser(String email, String password, String name) async {
+  Future<APIResponse<User>> registerUser(String email, String password) async {
     User? user;
     String? error;
     try {
-      Map<String, dynamic> response = await flutterFeathersJS.scketio.create(
+      Map<String, dynamic> response = await flutterFeathersJS.create(
         serviceName: "users",
-        data: {"email": email, "password": password, "name": name},
+        data: {"email": email, "password": password},
       );
-      log(response.toString());
+      logger.i(response.toString());
       user = User.fromMap(response);
-      // If all thing is ok, save user in local storage
-      /*  await utils.setLoggedUser(user);
-       */
+      await loginUser(email, password);
     } on FeatherJsError catch (e) {
       if (e.type == FeatherJsErrorType.IS_INVALID_CREDENTIALS_ERROR) {
-        log("IS_INVALID_CREDENTIALS_ERROR");
+        logger.e("IS_INVALID_CREDENTIALS_ERROR");
         error = "Please check your credentials";
       } else if (e.type == FeatherJsErrorType.IS_INVALID_STRATEGY_ERROR) {
-        log("IS_INVALID_STRATEGY_ERROR");
+        logger.e("IS_INVALID_STRATEGY_ERROR");
       } else if (e.type == FeatherJsErrorType.IS_AUTH_FAILED_ERROR) {
-        log("IS_AUTH_FAILED_ERROR");
+        logger.e("IS_AUTH_FAILED_ERROR");
         error = "Unexpected error occured, please retry!";
       } else {
-        log("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
+        logger.e("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
         error = "Unexpected FeatherJsError occured, please retry!";
       }
     } catch (e) {
-      log("Unexpected error ::: ${e.toString()}");
+      logger.e("Unexpected error ::: ${e.toString()}");
       error = "Unexpected error occured, please retry!";
     }
     return APIResponse(errorMessage: error, data: user);

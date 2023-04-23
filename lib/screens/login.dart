@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:feathersjs_demo_app/global.dart';
 import 'package:feathersjs_demo_app/screens/messages.dart';
 import 'package:feathersjs_demo_app/screens/register.dart';
 import 'package:feathersjs_demo_app/screens/widgets/loading.dart';
@@ -85,47 +84,49 @@ class _LoginScreenState extends State<LoginScreen> {
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
                             backgroundColor: const Color(0xff447def),
                           ),
-                          onPressed: () async {
-                            setState(() {
-                              shouldValidate = true;
-                            });
-                            if (key.currentState!.validate()) {
-                              key.currentState!.save();
-                              setState(() {
-                                isLoggingIn = true;
-                              });
-                              AuthAPI auth = AuthAPI();
-                              final response = await auth.loginUser(email, password);
-                              setState(() {
-                                isLoggingIn = false;
-                              });
-                              if (response.errorMessage == null) {
-                                log(response.data!.toString());
-                                if (context.mounted) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return const MessagesScreen();
-                                      },
-                                    ),
-                                  );
-                                }
-                              } else {
-                                if (context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text(response.errorMessage!),
-                                      elevation: 2,
-                                      duration: const Duration(seconds: 3),
-                                      behavior: SnackBarBehavior.floating,
-                                      margin: const EdgeInsets.all(5),
-                                    ),
-                                  );
-                                }
-                              }
-                            }
-                          },
+                          onPressed: isLoggingIn
+                              ? null
+                              : () async {
+                                  setState(() {
+                                    shouldValidate = true;
+                                  });
+                                  if (key.currentState!.validate()) {
+                                    key.currentState!.save();
+                                    setState(() {
+                                      isLoggingIn = true;
+                                    });
+                                    AuthAPI auth = AuthAPI();
+                                    final response = await auth.loginUser(email, password);
+                                    setState(() {
+                                      isLoggingIn = false;
+                                    });
+                                    if (response.errorMessage == null) {
+                                      logger.i(response.data!.toString());
+                                      if (context.mounted) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return const MessagesScreen();
+                                            },
+                                          ),
+                                        );
+                                      }
+                                    } else {
+                                      if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(
+                                            content: Text(response.errorMessage!),
+                                            elevation: 2,
+                                            duration: const Duration(seconds: 3),
+                                            behavior: SnackBarBehavior.floating,
+                                            margin: const EdgeInsets.all(5),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  }
+                                },
                           child: isLoggingIn
                               ? const MiniCPI()
                               : const Text(

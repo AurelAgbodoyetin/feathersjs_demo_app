@@ -1,5 +1,4 @@
-import 'dart:developer';
-
+import 'package:feathersjs_demo_app/global.dart';
 import 'package:feathersjs_demo_app/screens/login.dart';
 import 'package:feathersjs_demo_app/screens/messages.dart';
 import 'package:feathersjs_demo_app/screens/widgets/loading.dart';
@@ -8,8 +7,6 @@ import 'package:feathersjs_demo_app/validators.dart';
 import 'package:flutter/material.dart';
 
 class RegisterScreen extends StatefulWidget {
-  static String id = '/RegisterPage';
-
   const RegisterScreen({super.key});
 
   @override
@@ -17,7 +14,6 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  late String name;
   late String email;
   late String password;
 
@@ -45,23 +41,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               Column(
                 children: [
-                  TextFormField(
-                    keyboardType: TextInputType.name,
-                    validator: (value) {
-                      if (Validators.isStringNotEmpty(value)) {
-                        return null;
-                      }
-                      return "Please enter a valid name";
-                    },
-                    onSaved: (value) {
-                      email = value!;
-                    },
-                    decoration: const InputDecoration(
-                      hintText: 'Name',
-                      labelText: 'Name',
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
@@ -112,12 +91,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 isRegistering = true;
                               });
                               AuthAPI auth = AuthAPI();
-                              final response = await auth.loginUser(email, password);
+                              final response = await auth.registerUser(email, password);
                               setState(() {
                                 isRegistering = false;
                               });
                               if (response.errorMessage == null) {
-                                log(response.data!.toString());
+                                logger.i(response.data!.toString());
                                 if (context.mounted) {
                                   Navigator.push(
                                     context,

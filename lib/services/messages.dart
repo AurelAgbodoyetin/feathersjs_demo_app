@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:feathersjs_demo_app/global.dart';
 import 'package:feathersjs_demo_app/main.dart';
 import 'package:feathersjs_demo_app/models/message.dart';
 import 'package:feathersjs_demo_app/services/api.dart';
@@ -14,7 +15,7 @@ class MessagesAPI {
         serviceName: "message",
         query: {},
       );
-      log(response.toString());
+      logger.i(response.toString());
       messages = List<Map<String, dynamic>>.from(response["data"])
           .map((map) => Message.fromMap(map))
           .toList();
@@ -22,10 +23,10 @@ class MessagesAPI {
       /*  await utils.setLoggedUser(user);
        */
     } on FeatherJsError catch (e) {
-      log("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
+      logger.e("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
       error = "Unexpected FeatherJsError occured, please retry!";
     } catch (e) {
-      log("Unexpected error ::: ${e.toString()}");
+      logger.e("Unexpected error ::: ${e.toString()}");
       error = "Unexpected error occured, please retry!";
     }
     return APIResponse(errorMessage: error, data: messages);
@@ -37,13 +38,14 @@ class MessagesAPI {
       Map<String, dynamic> response = await flutterFeathersJS.scketio.create(
         serviceName: "message",
         data: {"message": msg.content},
+        params: {},
       );
-      log(response.toString());
+      logger.e(response.toString());
     } on FeatherJsError catch (e) {
-      log("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
+      logger.e("FeatherJsError error ::: Type => ${e.type} ::: Message => ${e.message}");
       error = "Unexpected FeatherJsError occured, please retry!";
     } catch (e) {
-      log("Unexpected error ::: ${e.toString()}");
+      logger.e("Unexpected error ::: ${e.toString()}");
       error = "Unexpected error occured, please retry!";
     }
     return APIResponse(errorMessage: error, data: null);

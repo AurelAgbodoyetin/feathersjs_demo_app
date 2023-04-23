@@ -1,9 +1,11 @@
 import 'package:feathersjs_demo_app/global.dart';
+import 'package:username_gen/username_gen.dart';
 
 class User {
-  String name;
-  String email;
-  String imageUrl;
+  final String id;
+  final String name;
+  final String email;
+  final String imageUrl;
 
   static List<String> profileImages = [
     "https://cdn.pixabay.com/photo/2020/05/09/13/29/photographer-5149664_1280.jpg",
@@ -15,11 +17,13 @@ class User {
     required this.name,
     required this.email,
     required this.imageUrl,
+    required this.id,
   });
 
   factory User.fromMap(Map<String, dynamic> map) {
     return User(
-      name: map['name'] as String,
+      id: map['_id'],
+      name: UsernameGen().generate(),
       email: map['email'] as String,
       imageUrl: profileImages[random.nextInt(profileImages.length)],
     );
